@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KK Wagh Indoor Navigation</title>
+    <link rel="icon" href="https://kkwagh.edu.in/wp-content/uploads/2021/07/kkwagh-logo.png">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 24px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+            padding: 32px 24px 24px 24px;
+        }
+        @media (max-width: 700px) {
+            .container { max-width: 98vw; padding: 10vw 1vw; }
+            #buildingMap { height: 150px !important; }
+        }
+        h1 {
+            text-align: center;
+            color: #2d3a4b;
+        }
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccd6e6;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #4f8cff;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #3266cc;
+        }
+        .directions {
+            margin-top: 32px;
+            background: #f0f6ff;
+            border-radius: 6px;
+            padding: 18px;
+            color: #222;
+            font-size: 17px;
+            min-height: 50px;
+            transition: box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(79,140,255,0.07);
+            animation: none;
+        }
+        .fadein {
+            animation: fadein 0.6s;
+        }
+        @keyframes fadein {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 18px;">
+            <img src="https://kkwagh.edu.in/wp-content/uploads/2021/07/kkwagh-logo.png" alt="KK Wagh Logo" style="height: 56px; border-radius: 8px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.09);">
+            <h1 style="margin: 0; color: #2d3a4b;">KK Wagh Navigation</h1>
+        </div>
+
+        <!-- SVG Map -->
+        <div id="mapSection" style="margin: 24px 0; background: #f8fafc; border-radius: 12px; padding: 18px;">
+            <svg id="buildingMap" width="100%" height="220" viewBox="0 0 480 220" style="max-width: 100%;">
+                <!-- Example: Rooms as rectangles with text labels -->
+                <rect x="30" y="80" width="60" height="40" fill="#e8f0fe" stroke="#4f8cff" stroke-width="2" class="room" data-room="Classroom A"/>
+                <text x="60" y="105" text-anchor="middle" font-size="13" fill="#2d3a4b">A</text>
+
+                <rect x="120" y="80" width="60" height="40" fill="#e8f0fe" stroke="#4f8cff" stroke-width="2" class="room" data-room="Classroom B"/>
+                <text x="150" y="105" text-anchor="middle" font-size="13" fill="#2d3a4b">B</text>
+
+                <rect x="210" y="80" width="60" height="40" fill="#e8f0fe" stroke="#4f8cff" stroke-width="2" class="room" data-room="Classroom C"/>
+                <text x="240" y="105" text-anchor="middle" font-size="13" fill="#2d3a4b">C</text>
+
+                <rect x="300" y="80" width="60" height="40" fill="#e8f0fe" stroke="#4f8cff" stroke-width="2" class="room" data-room="Lab 1"/>
+                <text x="330" y="105" text-anchor="middle" font-size="13" fill="#2d3a4b">Lab 1</text>
+
+                <rect x="390" y="80" width="60" height="40" fill="#e8f0fe" stroke="#4f8cff" stroke-width="2" class="room" data-room="Lab 2"/>
+                <text x="420" y="105" text-anchor="middle" font-size="13" fill="#2d3a4b">Lab 2</text>
+
+                <rect x="120" y="20" width="60" height="40" fill="#f9fbe7" stroke="#ffb300" stroke-width="2" class="room" data-room="Main Entrance"/>
+                <text x="150" y="45" text-anchor="middle" font-size="13" fill="#2d3a4b">Entrance</text>
+
+                <rect x="210" y="20" width="60" height="40" fill="#f9fbe7" stroke="#ffb300" stroke-width="2" class="room" data-room="Lobby"/>
+                <text x="240" y="45" text-anchor="middle" font-size="13" fill="#2d3a4b">Lobby</text>
+
+                <rect x="300" y="20" width="60" height="40" fill="#e1f5fe" stroke="#0288d1" stroke-width="2" class="room" data-room="Faculty Room"/>
+                <text x="330" y="45" text-anchor="middle" font-size="13" fill="#2d3a4b">Faculty</text>
+
+                <rect x="390" y="20" width="60" height="40" fill="#fffde7" stroke="#fbc02d" stroke-width="2" class="room" data-room="Library"/>
+                <text x="420" y="45" text-anchor="middle" font-size="13" fill="#2d3a4b">Library</text>
+
+                <rect x="30" y="20" width="60" height="40" fill="#ede7f6" stroke="#7e57c2" stroke-width="2" class="room" data-room="Stairs"/>
+                <text x="60" y="45" text-anchor="middle" font-size="13" fill="#2d3a4b">Stairs</text>
+            </svg>
+            <div id="mapLegend" style="margin-top: 10px; font-size: 13px; color: #444;">
+                <b>Tip:</b> Click a room to auto-select it below.
+            </div>
+        </div>
+
+        <!-- Floor selector -->
+        <div style="margin-bottom: 12px;">
+            <label for="floorSelect" style="font-weight: bold;">Select Floor</label>
+            <select id="floorSelect" style="width: 100%; padding: 10px; border: 1px solid #ccd6e6; border-radius: 6px; font-size: 15px;">
+                <option value="ground">Ground Floor</option>
+                <option value="first">First Floor</option>
+                <option value="second">Second Floor</option>
+                <option value="fourth">Fourth Floor </option>
+            </select>
+        </div>
+        <!-- Search bar -->
+        <input type="text" id="locationSearch" placeholder="Search location..." style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccd6e6; border-radius: 6px; font-size: 15px;">
+
+        <form id="navForm" autocomplete="off">
+            <label for="start">Starting Location</label>
+            <select id="start" required aria-label="Starting location">
+                <option value="" disabled selected>Select starting location</option>
+            </select>
+
+            <label for="end">Destination</label>
+            <select id="end" required aria-label="Destination">
+                <option value="" disabled selected>Select destination</option>
+            </select>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                <button type="submit" id="getDirectionsBtn" disabled>Get Directions</button>
+                <button type="button" id="resetBtn" style="background: #e5e9f2; color: #2d3a4b; border: 1px solid #ccd6e6;">Reset</button>
+                <button type="button" id="printBtn" style="background: #fff; color: #2d3a4b; border: 1px solid #ccd6e6;">Print</button>
+                <button type="button" id="shareBtn" style="background: #fff; color: #2d3a4b; border: 1px solid #ccd6e6;">Share</button>
+            </div>
+        </form>
+
+        <div id="routeSummary" style="margin-top: 12px; color: #252525; font-size: 15px;"></div>
+        <div class="directions" id="directions" aria-live="polite"></div>
+
+        <!-- Feedback & Help -->
+        <div style="margin-top: 32px; background: #f7f7fa; border-radius: 8px; padding: 14px 16px; color: #3a3a3a; font-size: 15px;">
+            <b>Help & Feedback:</b> <br>
+            <span>Lost? <a href="#" id="faqLink">Read FAQ</a> or <a href="#" id="reportLink">Report an Issue</a></span>
+        </div>
+    </div>
+    <script>
+        // Floor and room data
+        const floorData = {
+            ground: {
+                name: 'Ground Floor',
+                rooms: ['B101', 'B102', 'Electrical Lab', 'Stairs'],
+                graph: {
+                    'B101': [ { to: 'B102', direction: 'Move Ahead' }, { to: 'Stairs', direction: 'Turn Right' } ],
+                    'B102': [ { to: 'B101', direction: 'Move Back' }, { to: 'Electrical Lab', direction: 'Turn Left' } ],
+                    'Electrical Lab': [ { to: 'B102', direction: 'Turn Right' }, { to: 'Stairs', direction: 'Move Ahead' } ],
+                    'Stairs': [ { to: 'B101', direction: 'Turn Left' }, { to: 'Electrical Lab', direction: 'Move Back' }, { to: 'Stairs-1F', direction: 'Take Upstairs' } ]
+                }
+            },
+            first: {
+                name: 'First Floor',
+                rooms: ['Electrical Department', 'B201', 'B202', 'New Software Lab', 'Stairs-1F'],
+                graph: {
+                    'Stairs-1F': [ { to: 'Stairs', direction: 'Take Downstairs' }, { to: 'Electrical Department', direction: 'Move Ahead' } ],
+                    'Electrical Department': [ { to: 'Stairs-1F', direction: 'Move Back' }, { to: 'B201', direction: 'Turn Left' }, { to: 'B202', direction: 'Turn Right' }, { to: 'New Software Lab', direction: 'Move Ahead' } ],
+                    'B201': [ { to: 'Electrical Department', direction: 'Turn Right' } ],
+                    'B202': [ { to: 'Electrical Department', direction: 'Turn Left' } ],
+                    'New Software Lab': [ { to: 'Electrical Department', direction: 'Move Back' } ]
+                }
+            },
+            second: {
+                name: 'Second Floor',
+                rooms: ['IT Department', 'B301', 'B302', 'Seminar Hall', 'Project Lab', 'Stairs-2F'],
+                graph: {
+                    'Stairs-2F': [ { to: 'Stairs-1F', direction: 'Take Downstairs' }, { to: 'IT Department', direction: 'Move Ahead' } ],
+                    'IT Department': [ { to: 'Stairs-2F', direction: 'Move Back' }, { to: 'B301', direction: 'Turn Left' }, { to: 'B302', direction: 'Turn Right' }, { to: 'Seminar Hall', direction: 'Move Ahead' }, { to: 'Project Lab', direction: 'Turn Sharp Right' } ],
+                    'B301': [ { to: 'IT Department', direction: 'Turn Right' } ],
+                    'B302': [ { to: 'IT Department', direction: 'Turn Left' } ],
+                    'Seminar Hall': [ { to: 'IT Department', direction: 'Move Back' } ],
+                    'Project Lab': [ { to: 'IT Department', direction: 'Turn Sharp Left' } ]
+                }
+            },
+            fourth: {
+                name: 'Fourth Floor (Coming Soon)',
+                rooms: [],
+                graph: {}
+            }
+        };
+
+        // Flatten all rooms for search and cross-floor navigation
+        function getAllRooms() {
+            return Object.values(floorData).flatMap(f => f.rooms);
+        }
+
+        // Multi-floor graph: merge all graphs, connect stairs
+        function getMergedGraph() {
+            let merged = {};
+            for (const [floor, data] of Object.entries(floorData)) {
+                for (const [room, edges] of Object.entries(data.graph)) {
+                    merged[room] = edges.map(e => ({...e}));
+                }
+            }
+            // Add stairs connections between floors
+            merged['Stairs'] = merged['Stairs'] || [];
+            merged['Stairs'].push({ to: 'Stairs-1F', direction: 'Take Upstairs' });
+            merged['Stairs-1F'] = merged['Stairs-1F'] || [];
+            merged['Stairs-1F'].push({ to: 'Stairs', direction: 'Take Downstairs' }, { to: 'Stairs-2F', direction: 'Take Upstairs' });
+            merged['Stairs-2F'] = merged['Stairs-2F'] || [];
+            merged['Stairs-2F'].push({ to: 'Stairs-1F', direction: 'Take Downstairs' });
+            return merged;
+        }
+
+        // Populate dropdowns
+        const startSelect = document.getElementById('start');
+        const endSelect = document.getElementById('end');
+        const floorSelect = document.getElementById('floorSelect');
+        let currentFloor = 'ground';
+
+        function populateDropdowns(filter = '', floor = currentFloor) {
+            startSelect.options.length = 1;
+            endSelect.options.length = 1;
+            floorData[floor].rooms.filter(room => room.toLowerCase().includes(filter.toLowerCase())).forEach(room => {
+                let opt1 = document.createElement('option');
+                opt1.value = room;
+                opt1.textContent = room;
+                startSelect.appendChild(opt1);
+                let opt2 = document.createElement('option');
+                opt2.value = room;
+                opt2.textContent = room;
+                endSelect.appendChild(opt2);
+            });
+        }
+        populateDropdowns();
+
+        // Floor selector functionality
+        floorSelect.addEventListener('change', function() {
+            currentFloor = this.value;
+            populateDropdowns(document.getElementById('locationSearch').value, currentFloor);
+        });
+
+        // Search bar functionality
+        document.getElementById('locationSearch').addEventListener('input', function() {
+            populateDropdowns(this.value, currentFloor);
+        });
+
+
+        // Enable/disable button based on selections
+        function updateButtonState() {
+            const start = startSelect.value;
+            const end = endSelect.value;
+            document.getElementById('getDirectionsBtn').disabled = (!start || !end || start === end);
+        }
+        startSelect.addEventListener('change', updateButtonState);
+        endSelect.addEventListener('change', updateButtonState);
+
+        // Pathfinding using BFS for shortest path (multi-floor)
+        function findPath(start, end) {
+            const graph = getMergedGraph();
+            let visited = new Set();
+            let queue = [{ node: start, path: [] }];
+            while (queue.length > 0) {
+                let { node, path } = queue.shift();
+                if (node === end) return path;
+                visited.add(node);
+                (graph[node] || []).forEach(edge => {
+                    if (!visited.has(edge.to)) {
+                        queue.push({ node: edge.to, path: [...path, { from: node, to: edge.to, direction: edge.direction }] });
+                    }
+                });
+            }
+            return null;
+        }
+
+        // Icon mapping for directions
+        const directionIcons = {
+            'Move Ahead': '⬆️',
+            'Move Back': '⬇️',
+            'Turn Left': '⬅️',
+            'Turn Right': '➡️',
+            'Turn Sharp Left': '↖️',
+            'Turn Sharp Right': '↗️',
+            'Take Upstairs': '🛗⬆️',
+            'Take Downstairs': '🛗⬇️'
+        };
+
+        document.getElementById('navForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const start = startSelect.value;
+            const end = endSelect.value;
+            const directionsDiv = document.getElementById('directions');
+            if (start === end) {
+                directionsDiv.innerHTML = '<span style="color: #31b057; font-weight: bold;">You are already at your destination!</span>';
+                directionsDiv.classList.remove('fadein');
+                void directionsDiv.offsetWidth;
+                directionsDiv.classList.add('fadein');
+                return;
+            }
+            const path = findPath(start, end);
+            if (!path) {
+                directionsDiv.innerHTML = '<span style="color: #e74c3c; font-weight: bold;">No route found.</span>';
+                directionsDiv.classList.remove('fadein');
+                void directionsDiv.offsetWidth;
+                directionsDiv.classList.add('fadein');
+                document.getElementById('routeSummary').textContent = '';
+                return;
+            }
+            let steps = path.map((step, idx) => {
+                let icon = directionIcons[step.direction] || '➡️';
+                return `<div style='margin-bottom: 10px; display: flex; align-items: center;'><span style='font-size: 1.3em; margin-right: 10px;'>${icon}</span><span>${idx+1}. From <b>${step.from}</b>, ${step.direction} to <b>${step.to}</b>.</span></div>`;
+            }).join('');
+            directionsDiv.innerHTML = steps;
+            directionsDiv.classList.remove('fadein');
+            void directionsDiv.offsetWidth;
+            directionsDiv.classList.add('fadein');
+            // Route summary
+            document.getElementById('routeSummary').textContent = `Steps: ${path.length}   |   Estimated time: ${Math.max(1, path.length*0.5)} min`;
+            // Highlight SVG rooms
+            document.querySelectorAll('.room').forEach(rect => rect.setAttribute('fill', rect.getAttribute('data-room').includes('Lab') ? '#e8f0fe' : (rect.getAttribute('data-room').includes('Classroom') ? '#e8f0fe' : (rect.getAttribute('data-room')==='Stairs' ? '#ede7f6' : '#f9fbe7'))));
+            path.forEach(step => {
+                let el = document.querySelector(`.room[data-room='${step.to}']`);
+                if (el) el.setAttribute('fill', '#ffe082');
+            });
+        });
+
+        // Reset button functionality
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            startSelect.selectedIndex = 0;
+            endSelect.selectedIndex = 0;
+            document.getElementById('directions').innerHTML = '';
+            document.getElementById('routeSummary').textContent = '';
+            updateButtonState();
+        });
+
+        // Print button
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Share button (Web Share API or fallback)
+        document.getElementById('shareBtn').addEventListener('click', function() {
+            const directionsText = document.getElementById('directions').innerText;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'KK Wagh Indoor Navigation',
+                    text: directionsText,
+                    url: window.location.href
+                });
+            } else {
+                alert('Copy and share these directions:\n\n' + directionsText);
+            }
+        });
+
+        // FAQ & Report links
+        document.getElementById('faqLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('FAQ: 1. Select your start and end location. 2. Click Get Directions. 3. Follow the steps. For more, contact the help desk.');
+        });
+        document.getElementById('reportLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('To report an issue, please contact: support@kkwagh.edu.in');
+        });
+
+        // SVG map room click: auto-select in dropdown
+        document.querySelectorAll('.room').forEach(rect => {
+            rect.style.cursor = 'pointer';
+            rect.addEventListener('click', function() {
+                const room = this.getAttribute('data-room');
+                if (!startSelect.value) {
+                    startSelect.value = room;
+                } else if (!endSelect.value || startSelect.value === room) {
+                    endSelect.value = room;
+                } else {
+                    startSelect.value = room;
+                }
+                updateButtonState();
+            });
+        });
+    
+    </script>
+</body>
+</html>
